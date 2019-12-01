@@ -17,7 +17,7 @@ var _ = require('lodash'),
         maxObjectsPerRequest: 100,
         defaultObjectsPerRequest: 10,
         db: {
-            baseUrl: 'mongodb://localhost/'
+            baseUrl: 'mongodb://user:smart-admin1@ds037611.mlab.com:37611/smart-betting'
         },
         secrets: {
             session: process.env.APP_SECRET || 'd6c8f42d6c2d04d1ed5c21ec2f199b59'

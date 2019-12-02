@@ -97,8 +97,20 @@ var Event = require('./eventModel'),
         },
 
         update: function (req, res, next) {
+            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
             var eventToBeUpdatedId = req.params.id,
                 updateObject = req.body;
+
 
             async.waterfall([
                 function (cb) {

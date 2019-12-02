@@ -1,5 +1,5 @@
 {
-  "name": "smart betting server",
+  "name": "smart-betting-server",
   "version": "0.0.1",
   "description": "rest api for smart betting web application",
   "main": "app.js",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fiddus/smart betting server.git"
+    "url": "https://github.com/silindatn/smart-betting-server.git"
   },
   "author": "Thulani Silinda",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/fiddus/smart betting server/issues"
+    "url": "https://github.com/silindatn/smart-betting-server/issues"
   },
-  "homepage": "https://github.com/fiddus/smart betting server",
+  "homepage": "https://github.com/silindatn/smart-betting-server",
   "devDependencies": {
     "chai": "^2.3.0",
     "grunt": "^0.4.5",

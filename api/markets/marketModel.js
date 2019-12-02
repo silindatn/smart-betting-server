@@ -10,9 +10,8 @@ var mongoose = require('mongoose'),
 
     EventSchema = new Schema({
         name: {type: String, required: true},
-        description: {type: String, required: true},
-        startDate: {type: Date, required: true, index: {unique: true, dropDups: true}},
-        endDate: {type: Date, required: true, index: {unique: true, dropDups: true}},
+        eventId: {type: Schema.Types.ObjectId, ref: 'Event'},
+        posibleOutcome: [{type: String}],
         createdAt: {type: Date},
         updatedAt: {type: Date},
     });

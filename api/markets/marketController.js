@@ -1,20 +1,20 @@
 /**
- * event Controller
+ * Market Controller
  */
 
 'use strict';
 
-var Event = require('./eventModel'),
+var Market = require('./marketModel'),
     Log = require('../logs/logModel'),
     config = require('../../config/environment'),
     _ = require('lodash'),
     async = require('async'),
     mask = require('json-mask'),
-    eventMask = 'id,name,description,startDate,endDate,createdAt,updatedAt',
+    marketMask = 'id,name,posibleOutcome,eventId,createdAt,updatedAt',
     auth = require('../../auth/authService'),
     paginationBuilder = require('../../lib/util/paginationBuilder'),
     paginationInfoBuilder = require('../../lib/util/buildPaginationInfo'),
-    collection = 'events',
+    collection = 'markets',
 
     handleError = function (err, res, next, status) {
         res.responseStatus = status || 500;
@@ -23,22 +23,22 @@ var Event = require('./eventModel'),
         return next();
     },
 
-    eventController = {
+    marketController = {
 
         create: function (req, res, next) {
 
-            var event = req.body;
+            var market = req.body;
 
-            if (!event.name) {
+            if (!market.name || market.eventId) {
                 res.responseStatus = 400;
-                res.fiddus.info = 'No name was provided. Please repeat request providing a name for the new event';
+                res.fiddus.info = 'No name or event link was provided. Please repeat request providing a name for the new market';
 
                 return next();
             }
 
-            event = new Event(event);
+            market = new Market(market);
 
-            event.save(function (err, event) {
+            market.save(function (err, market) {
                 if (err) {
                     res.fiddus.info = err.code === 11000 ? 'This email already exists.' : 'Database error';
                     res.fiddus.data = err;
@@ -46,12 +46,9 @@ var Event = require('./eventModel'),
                     return next();
                 }
 
-                var token = auth.signToken(event);
-
                 res.responseStatus = 201;
-                res.fiddus.info = 'New event created';
-                res.fiddus.data = mask(event, eventMask);
-                res.fiddus.data.token = token;
+                res.fiddus.info = 'New market created';
+                res.fiddus.data = mask(market, marketMask);
 
                 // Logging
                 Log.create({
@@ -59,26 +56,24 @@ var Event = require('./eventModel'),
                     action: 'Created',
                     target: {
                         collection: collection,
-                        id: event._id
+                        id: market._id
                     }
                 });
 
-                // activator stuff
-                req.event = event;
                 next();
             });
         },
 
         read: function (req, res, next) {
-            var eventId = req.params.id,
+            var marketId = req.params.id,
                 fields = req.query.fields;
 
-            Event.findOne({_id: eventId}, function (err, event) {
+            Market.findOne({_id: marketId}, function (err, market) {
                 if (err) {
                     return handleError(err, res, next);
                 }
 
-                var eventSent = mask(event, eventMask);
+                var marketSent = mask(market, marketMask);
 
                 // Logging
                 Log.create({
@@ -86,12 +81,12 @@ var Event = require('./eventModel'),
                     action: 'Read',
                     target: {
                         collection: collection,
-                        id: event._id
+                        id: market._id
                     }
                 });
 
-                res.fiddus.info = 'Got event ' + eventId;
-                res.fiddus.data = fields ? mask(eventSent, fields) : eventSent;
+                res.fiddus.info = 'Got market ' + marketId;
+                res.fiddus.data = fields ? mask(marketSent, fields) : marketSent;
                 next();
             });
         },
@@ -108,7 +103,7 @@ var Event = require('./eventModel'),
             console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
             console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
             console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            var eventToBeUpdatedId = req.params.id,
+            var marketToBeUpdatedId = req.params.id,
                 updateObject = req.body;
 
 
@@ -118,20 +113,20 @@ var Event = require('./eventModel'),
                     cb(null);
                 },
                 function (cb) {
-                    Event.findOne({_id: eventToBeUpdatedId}, function (err, event) {
+                    Market.findOne({_id: marketToBeUpdatedId}, function (err, market) {
                         if (err) {
                             cb(err);
                         }
 
-                        cb(null, event);
+                        cb(null, market);
                     });
                 },
-                function (event, cb) {
+                function (market, cb) {
                     _.forOwn(updateObject, function (value, key) {
-                        event[key] = updateObject[key];
+                        market[key] = updateObject[key];
                     });
 
-                    event.save(function (err) {
+                    market.save(function (err) {
                         if (err) {
                             cb(err);
                         }
@@ -142,12 +137,12 @@ var Event = require('./eventModel'),
                             action: 'Update',
                             target: {
                                 collection: collection,
-                                id: event._id
+                                id: market._id
                             }
                         });
 
-                        res.fiddus.info = 'Updated event ' + event._id;
-                        res.fiddus.data = mask(event, eventMask);
+                        res.fiddus.info = 'Updated market ' + market._id;
+                        res.fiddus.data = mask(market, marketMask);
                         return next();
                     });
                 }
@@ -157,9 +152,9 @@ var Event = require('./eventModel'),
         },
 
         delete: function (req, res, next) {
-            var eventToBeDeletedId = req.params.id;
+            var marketToBeDeletedId = req.params.id;
 
-            Event.remove({_id: eventToBeDeletedId}, function (err) {
+            Market.remove({_id: marketToBeDeletedId}, function (err) {
                 if (err) {
                     return handleError(err, res, next);
                 }
@@ -170,7 +165,7 @@ var Event = require('./eventModel'),
                     action: 'Delete',
                     target: {
                         collection: collection,
-                        id: eventToBeDeletedId
+                        id: marketToBeDeletedId
                     }
                 });
 
@@ -184,7 +179,7 @@ var Event = require('./eventModel'),
 
             async.series([
                 // function (cb) {
-                //     paginationInfoBuilder(req, event, {}).done(function (info) {
+                //     paginationInfoBuilder(req, market, {}).done(function (info) {
                 //         paginationInfo = info;
                 //         cb(null);
                 //     }, function (err) {
@@ -192,14 +187,14 @@ var Event = require('./eventModel'),
                 //     });
                 // },
                 function (callback) {
-                    Event.find({})
-                        .exec(function (err, events) {
+                    Market.find({})
+                        .exec(function (err, markets) {
 
-                            // Apply mask to all events found, asynchronously
-                            async.mapSeries(events, function (event, cb) {
-                                var eventSent = mask(event, eventMask);
-                                eventSent = fields ? mask(eventSent, fields) : eventSent;
-                                cb(null, eventSent);
+                            // Apply mask to all markets found, asynchronously
+                            async.mapSeries(markets, function (market, cb) {
+                                var marketSent = mask(market, marketMask);
+                                marketSent = fields ? mask(marketSent, fields) : marketSent;
+                                cb(null, marketSent);
                             }, function (err, results) {
                                 if (err) {
                                     callback(err);
@@ -214,7 +209,7 @@ var Event = require('./eventModel'),
                                     }
                                 });
 
-                                res.fiddus.info = 'events list';
+                                res.fiddus.info = 'markets list';
                                 res.fiddus.data = results;
                                 // res.fiddus.pagination = paginationBuilder(req,
                                 //     paginationInfo.limit, paginationInfo.numPages);
@@ -228,4 +223,4 @@ var Event = require('./eventModel'),
         },
     };
 
-module.exports = eventController;
+module.exports = marketController;

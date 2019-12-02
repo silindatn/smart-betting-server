@@ -46,12 +46,9 @@ var Event = require('./eventModel'),
                     return next();
                 }
 
-                var token = auth.signToken(event);
-
                 res.responseStatus = 201;
                 res.fiddus.info = 'New event created';
                 res.fiddus.data = mask(event, eventMask);
-                res.fiddus.data.token = token;
 
                 // Logging
                 Log.create({
@@ -62,9 +59,7 @@ var Event = require('./eventModel'),
                         id: event._id
                     }
                 });
-
-                // activator stuff
-                req.event = event;
+                
                 next();
             });
         },
@@ -97,17 +92,6 @@ var Event = require('./eventModel'),
         },
 
         update: function (req, res, next) {
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
             var eventToBeUpdatedId = req.params.id,
                 updateObject = req.body;
 

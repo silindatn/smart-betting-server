@@ -14,7 +14,7 @@ var User = require('../api/users/userModel'),
         auth: {
             /* jshint ignore:start */
             /* jscs:disable */
-            api_key: process.env.MAILGUN_APIKEY,
+            api_key: 'MAILGUN_APIKEY', // process.env.MAILGUN_APIKEY,
             /* jshint ignore:end */
             /* jscs:enable */
             domain: 'silindatn@gmail.com'

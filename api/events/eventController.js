@@ -171,14 +171,14 @@ var Event = require('./eventModel'),
                 paginationInfo;
 
             async.series([
-                function (cb) {
-                    paginationInfoBuilder(req, event, {}).done(function (info) {
-                        paginationInfo = info;
-                        cb(null);
-                    }, function (err) {
-                        cb(err);
-                    });
-                },
+                // function (cb) {
+                //     paginationInfoBuilder(req, event, {}).done(function (info) {
+                //         paginationInfo = info;
+                //         cb(null);
+                //     }, function (err) {
+                //         cb(err);
+                //     });
+                // },
                 function (callback) {
                     Event.find({})
                         .exec(function (err, events) {
@@ -204,8 +204,8 @@ var Event = require('./eventModel'),
 
                                 res.fiddus.info = 'events list';
                                 res.fiddus.data = results;
-                                res.fiddus.pagination = paginationBuilder(req,
-                                    paginationInfo.limit, paginationInfo.numPages);
+                                // res.fiddus.pagination = paginationBuilder(req,
+                                //     paginationInfo.limit, paginationInfo.numPages);
                                 return next();
                             });
                         });

@@ -11,7 +11,7 @@ var mongoose = require('mongoose'),
 
     LogSchema = new Schema({
         timestamp: {type: Date},
-        userId: {type: String, required: true},
+        userId: {type: String, required: false},
         action: {type: String, required: true},
         target: {
             collection: {type: String},

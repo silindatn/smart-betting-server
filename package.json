@@ -6,7 +6,8 @@
   "scripts": {
     "test": "grunt test",
     "postinstall": "npm install -g forever",
-    "start": "forever start app.js"
+    "start": "forever start app.js",
+    "onpm2": "pm2 start app.js; pm2 logs"
   },
   "repository": {
     "type": "git",

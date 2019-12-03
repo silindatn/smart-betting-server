@@ -11,7 +11,10 @@ var mongoose = require('mongoose'),
     MarketSchema = new Schema({
         name: {type: String, required: true},
         eventId: {type: Schema.Types.ObjectId, ref: 'Event'},
-        posibleOutcome: [{type: String}],
+        posibleOutcome: [{
+            name: {type: String},
+            probability: {type: Number}
+        }],
         createdAt: {type: Date},
         updatedAt: {type: Date},
     });

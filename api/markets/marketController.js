@@ -29,7 +29,7 @@ var Market = require('./marketModel'),
 
             var market = req.body;
 
-            if (!market.name || market.eventId) {
+            if (!market.name || !market.eventId) {
                 res.responseStatus = 400;
                 res.fiddus.info = 'No name or event link was provided. Please repeat request providing a name for the new market';
 

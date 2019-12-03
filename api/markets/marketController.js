@@ -214,7 +214,6 @@ var Market = require('./marketModel'),
                             // Apply mask to all markets found, asynchronously
                             async.mapSeries(markets, function (market, cb) {
                                 var marketSent = mask(market, marketMask);
-                                marketSent = fields ? mask(marketSent, fields) : marketSent;
                                 cb(null, marketSent);
                             }, function (err, results) {
                                 if (err) {

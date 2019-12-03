@@ -19,7 +19,7 @@ router.post('/', controller.create, responseFormatter);
 
 router.get('/:id', controller.read, responseFormatter);
 
-router.get('by-eventid/:id', controller.readByEventId, responseFormatter);
+router.get('/by-eventid/:id', controller.readByEventId, responseFormatter);
 
 router.put('/:id', controller.update, responseFormatter);
 

@@ -1,5 +1,5 @@
 /**
- * Event Model
+ * Market Model
  */
 
 'use strict';
@@ -8,7 +8,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     moment = require('moment'),
 
-    EventSchema = new Schema({
+    MarketSchema = new Schema({
         name: {type: String, required: true},
         eventId: {type: Schema.Types.ObjectId, ref: 'Event'},
         posibleOutcome: [{type: String}],
@@ -18,17 +18,17 @@ var mongoose = require('mongoose'),
 
 // Virtuals:
 
-EventSchema
+MarketSchema
     .virtual('id')
     .get(function () {
         return this._id.toHexString();
     });
 
-EventSchema.set('toObject', {
+MarketSchema.set('toObject', {
     virtuals: true
 });
 
-EventSchema
+MarketSchema
     .pre('save', function (next) {
 
         if (!this.isNew) {
@@ -43,7 +43,7 @@ EventSchema
 
     });
 
-EventSchema.methods = {
+MarketSchema.methods = {
 };
 
-module.exports = mongoose.model('Event', EventSchema);
+module.exports = mongoose.model('Market', MarketSchema);

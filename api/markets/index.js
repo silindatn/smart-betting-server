@@ -5,7 +5,7 @@
 'use strict';
 
 var router = require('express').Router(),
-    controller = require('./eventController'),
+    controller = require('./marketController'),
     auth = require('../../auth/authService'),
     formatResponse = require('express-format-response'),
     template = require('../../config/responseTemplate'),

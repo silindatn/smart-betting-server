@@ -92,17 +92,6 @@ var Market = require('./marketModel'),
         },
 
         update: function (req, res, next) {
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            console.log('...............................kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk');
             var marketToBeUpdatedId = req.params.id,
                 updateObject = req.body;
 

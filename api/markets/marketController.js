@@ -167,16 +167,48 @@ var Market = require('./marketModel'),
                 paginationInfo;
 
             async.series([
-                // function (cb) {
-                //     paginationInfoBuilder(req, market, {}).done(function (info) {
-                //         paginationInfo = info;
-                //         cb(null);
-                //     }, function (err) {
-                //         cb(err);
-                //     });
-                // },
                 function (callback) {
                     Market.find({})
+                        .exec(function (err, markets) {
+
+                            // Apply mask to all markets found, asynchronously
+                            async.mapSeries(markets, function (market, cb) {
+                                var marketSent = mask(market, marketMask);
+                                marketSent = fields ? mask(marketSent, fields) : marketSent;
+                                cb(null, marketSent);
+                            }, function (err, results) {
+                                if (err) {
+                                    callback(err);
+                                }
+
+                                // Logging
+                                Log.create({
+                                    userId: null,
+                                    action: 'List',
+                                    target: {
+                                        collection: collection
+                                    }
+                                });
+
+                                res.fiddus.info = 'markets list';
+                                res.fiddus.data = results;
+                                // res.fiddus.pagination = paginationBuilder(req,
+                                //     paginationInfo.limit, paginationInfo.numPages);
+                                return next();
+                            });
+                        });
+                }],
+                function (err) {
+                    return handleError(err, res, next);
+                });
+        },
+
+        readByEventId: function (req, res, next) {
+            var eventId = req.params.id;
+
+            async.series([
+                function (callback) {
+                    Market.find({eventId: eventId})
                         .exec(function (err, markets) {
 
                             // Apply mask to all markets found, asynchronously

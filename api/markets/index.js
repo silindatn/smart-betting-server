@@ -15,19 +15,16 @@ var router = require('express').Router(),
 
 activator.init(activatorConfig);
 
-// Creates a new event
 router.post('/', controller.create, responseFormatter);
 
-// Reads an event
 router.get('/:id', controller.read, responseFormatter);
 
-// Updates an event
+router.get('by-eventid/:id', controller.readByEventId, responseFormatter);
+
 router.put('/:id', controller.update, responseFormatter);
 
-// Deletes an event
 router.delete('/:id', controller.delete);
 
-// Lists all events
 router.get('/', controller.list, responseFormatter);
 
 module.exports = router;

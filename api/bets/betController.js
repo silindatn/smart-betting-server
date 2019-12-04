@@ -98,7 +98,7 @@ var Bet = require('./betModel'),
 
             async.waterfall([
                 function (cb) {
-                    updateObject = mask(updateObject, 'name,description,startDate,endDate');
+                    updateObject = mask(updateObject, 'name,eventId,marketId,posibleOutcome');
                     cb(null);
                 },
                 function (cb) {

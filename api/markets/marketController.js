@@ -98,7 +98,7 @@ var Market = require('./marketModel'),
 
             async.waterfall([
                 function (cb) {
-                    updateObject = mask(updateObject, 'name,description,startDate,endDate');
+                    updateObject = mask(updateObject, 'name,actualOutcome,posibleOutcome,eventId');
                     cb(null);
                 },
                 function (cb) {

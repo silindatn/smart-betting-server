@@ -11,7 +11,7 @@ var Bet = require('./betModel'),
     _ = require('lodash'),
     async = require('async'),
     mask = require('json-mask'),
-    betMask = 'id,posibleOutcome,eventId,marketId,result,winings,createdAt,updatedAt',
+    betMask = 'id,posibleOutcome,amount,eventId,marketId,result,winings,createdAt,updatedAt',
     auth = require('../../auth/authService'),
     paginationBuilder = require('../../lib/util/paginationBuilder'),
     paginationInfoBuilder = require('../../lib/util/buildPaginationInfo'),
@@ -240,6 +240,9 @@ var Bet = require('./betModel'),
                                     });
                                 },
                                 function chartData(bets, _next_) {
+                                    let inAmount = _.filter(bets, function(b) { return b.winings === 0; });
+                                    let outAmount = _.filter(bets, function(b) { return b.winings > 0; });
+
                                     let charts = [
                                         {
                                             labels: [
@@ -247,8 +250,8 @@ var Bet = require('./betModel'),
                                                 'Pay Out Bets'
                                             ],
                                             data: [
-                                                _.filter(bets, function(b) { return b.winings === 0; }).length,
-                                                _.filter(bets, function(b) { return b.winings > 0; }).length,
+                                                inAmount.length,
+                                                outAmount.length,
                                             ]
                                         },
                                         {
@@ -257,8 +260,8 @@ var Bet = require('./betModel'),
                                                 'Pay Out Amount'
                                             ],
                                             data: [
-                                                _.sumBy(_.filter(bets, function(b) { return b.winings === 0; }), function(o) { return o.amount; }),
-                                                _.sumBy(_.filter(bets, function(b) { return b.winings > 0; }), function(o) { return o.winings; })
+                                                inAmount.reduce((a, b) => a.amount + b.amount, 0),
+                                                outAmount.reduce((a, b) => a.winings + b.winings, 0)
                                             ]
                                         }
                                     ]

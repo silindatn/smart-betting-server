@@ -15,6 +15,10 @@ var mongoose = require('mongoose'),
             name: {type: String},
             probability: {type: Number}
         }],
+        actualOutcome: {
+            name: {type: String},
+            probability: {type: Number}
+        },
         createdAt: {type: Date},
         updatedAt: {type: Date},
     });

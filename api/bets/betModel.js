@@ -16,6 +16,8 @@ var mongoose = require('mongoose'),
             name: {type: String},
             probability: {type: Number}
         },
+        result: {type: String, default: 'pending'},
+        winings: {type: Number, default: 0},
         createdAt: {type: Date},
         updatedAt: {type: Date},
     });

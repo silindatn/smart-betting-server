@@ -99,7 +99,7 @@ var Bet = require('./betModel'),
 
             async.waterfall([
                 function (cb) {
-                    updateObject = mask(updateObject, 'name,eventId,marketId,posibleOutcome');
+                    updateObject = mask(updateObject, 'name,amount,eventId,marketId,posibleOutcome');
                     cb(null);
                 },
                 function (cb) {
@@ -215,42 +215,75 @@ var Bet = require('./betModel'),
                 function (callback) {
                     Market.find({})
                         .exec(function (err, markets) {
-                            console.log('Err : ', err);
-                            console.log('Markets : ', markets);
-                            callback(err);
-                            // async.waterfall([
-                            //     function getMarkets(_next_) {
-                            //         Market.find({}, function (error, markets) {
-                            //             console.log('Err : ', error);
-                            //             console.log('Markets : ', markets);
-                            //             _next_('error - error', null);
-                            //         });
-                            //     }
-                            // ], 
-                            // function done (err, results) {
-                            //     console.log('**************************************************');
-                            //     console.log('**************************************************');
-                            //     console.log(err);
-                            //     console.log('**************************************************');
-                            //     console.log('**************************************************');
-                            //     if (err) {
-                            //         callback(err);
-                            //     } else {
-                            //         // Logging
-                            //         Log.create({
-                            //             userId: null,
-                            //             action: 'Charts info',
-                            //             target: {
-                            //                 collection: collection
-                            //             }
-                            //         });
+                            async.waterfall([
+                                function getMarkets(_next_) {
+                                    let ids = [];
+                                    async.forEachOf(markets, (market, index, cb) => {
+                                        if (market.actualOutcome) {
+                                            ids.push(market._id);
+                                            cb();
+                                        }
+                                    }, function done() {
+                                        _next_(null, ids);
+                                    })
+                                },
+                                function getBets(m_ids, _next_) {
 
-                            //         res.fiddus.info = 'charts info';
-                            //         res.fiddus.data = results;
+                                    console.log('...........ids..', m_ids.length);
+                                    Bet.find({marketId: {$in: m_ids}}, (error, bets) => {
+                                        if (error) {
+                                            _next_(error, null);
+                                        } else {
+                                            console.log('.............', bets.length);
+                                            _next_(null, bets);
+                                        }
+                                    });
+                                },
+                                function chartData(bets, _next_) {
+                                    let charts = [
+                                        {
+                                            labels: [
+                                                'Pay In Bets',
+                                                'Pay Out Bets'
+                                            ],
+                                            data: [
+                                                _.filter(bets, function(b) { return b.winings === 0; }).length,
+                                                _.filter(bets, function(b) { return b.winings > 0; }).length,
+                                            ]
+                                        },
+                                        {
+                                            labels: [
+                                                'Pay In Amount',
+                                                'Pay Out Amount'
+                                            ],
+                                            data: [
+                                                _.sumBy(_.filter(bets, function(b) { return b.winings === 0; }), function(o) { return o.amount; }),
+                                                _.sumBy(_.filter(bets, function(b) { return b.winings > 0; }), function(o) { return o.winings; })
+                                            ]
+                                        }
+                                    ]
+                                    _next_(null, charts);
+                                }
+                            ], 
+                            function done (err, results) {
+                                if (err) {
+                                    callback(err);
+                                } else {
+                                    // Logging
+                                    Log.create({
+                                        userId: null,
+                                        action: 'Charts info',
+                                        target: {
+                                            collection: collection
+                                        }
+                                    });
 
-                            //         return next();
-                            //     }
-                            // });
+                                    res.fiddus.info = 'charts info';
+                                    res.fiddus.data = results;
+
+                                    return next();
+                                }
+                            });
                         });
                 }],
                 function (err) {

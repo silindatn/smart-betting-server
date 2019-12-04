@@ -18,6 +18,7 @@ var mongoose = require('mongoose'),
         },
         result: {type: String, default: 'pending'},
         winings: {type: Number, default: 0},
+        amount: {type: Number, default: 0},
         createdAt: {type: Date},
         updatedAt: {type: Date},
     });

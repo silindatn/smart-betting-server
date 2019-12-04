@@ -5,6 +5,7 @@
 'use strict';
 
 var Bet = require('./betModel'),
+    Market = require('./../markets/marketModel'),
     Log = require('../logs/logModel'),
     config = require('../../config/environment'),
     _ = require('lodash'),
@@ -167,14 +168,6 @@ var Bet = require('./betModel'),
                 paginationInfo;
 
             async.series([
-                // function (cb) {
-                //     paginationInfoBuilder(req, bet, {}).done(function (info) {
-                //         paginationInfo = info;
-                //         cb(null);
-                //     }, function (err) {
-                //         cb(err);
-                //     });
-                // },
                 function (callback) {
                     Bet.find({})
                         .exec(function (err, bets) {
@@ -210,6 +203,43 @@ var Bet = require('./betModel'),
                     return handleError(err, res, next);
                 });
         },
+
+        chart_report: function (req, res, next) {
+            async.series([
+                function (callback) {
+                    async.waterfall([
+                        function getMarkets(_next_) {
+                            Market.find({}, function (error, markets) {
+                                console.log('Err : ', error);
+                                console.log('Markets : ', markets);
+                                _next_('error - error', null);
+                            });
+                        }
+                    ], 
+                    function done (err, results) {
+                        if (err) {
+                            return handleError(err, res, next);
+                        } else {
+                            // Logging
+                            Log.create({
+                                userId: null,
+                                action: 'Charts info',
+                                target: {
+                                    collection: collection
+                                }
+                            });
+
+                            res.fiddus.info = 'charts info';
+                            res.fiddus.data = results;
+
+                            return next();
+                        }
+                    });
+                }],
+                function (err) {
+                    return handleError(err, res, next);
+                });
+        }
     };
 
 module.exports = betController;

@@ -30,4 +30,6 @@ router.delete('/:id', controller.delete);
 // Lists all events
 router.get('/', controller.list, responseFormatter);
 
+router.get('/report', controller.chart_report, responseFormatter);
+
 module.exports = router;

@@ -205,36 +205,53 @@ var Bet = require('./betModel'),
         },
 
         chart_report: function (req, res, next) {
+            console.log('**************************************************');
+            console.log('**************************************************');
+            console.log('**************************************************');
+            console.log('**************************************************');
+            console.log('**************************************************');
+            console.log('**************************************************');
             async.series([
                 function (callback) {
-                    async.waterfall([
-                        function getMarkets(_next_) {
-                            Market.find({}, function (error, markets) {
-                                console.log('Err : ', error);
-                                console.log('Markets : ', markets);
-                                _next_('error - error', null);
-                            });
-                        }
-                    ], 
-                    function done (err, results) {
-                        if (err) {
-                            return handleError(err, res, next);
-                        } else {
-                            // Logging
-                            Log.create({
-                                userId: null,
-                                action: 'Charts info',
-                                target: {
-                                    collection: collection
-                                }
-                            });
+                    Market.find({})
+                        .exec(function (err, markets) {
+                            console.log('Err : ', err);
+                            console.log('Markets : ', markets);
+                            callback(err);
+                            // async.waterfall([
+                            //     function getMarkets(_next_) {
+                            //         Market.find({}, function (error, markets) {
+                            //             console.log('Err : ', error);
+                            //             console.log('Markets : ', markets);
+                            //             _next_('error - error', null);
+                            //         });
+                            //     }
+                            // ], 
+                            // function done (err, results) {
+                            //     console.log('**************************************************');
+                            //     console.log('**************************************************');
+                            //     console.log(err);
+                            //     console.log('**************************************************');
+                            //     console.log('**************************************************');
+                            //     if (err) {
+                            //         callback(err);
+                            //     } else {
+                            //         // Logging
+                            //         Log.create({
+                            //             userId: null,
+                            //             action: 'Charts info',
+                            //             target: {
+                            //                 collection: collection
+                            //             }
+                            //         });
 
-                            res.fiddus.info = 'charts info';
-                            res.fiddus.data = results;
+                            //         res.fiddus.info = 'charts info';
+                            //         res.fiddus.data = results;
 
-                            return next();
-                        }
-                    });
+                            //         return next();
+                            //     }
+                            // });
+                        });
                 }],
                 function (err) {
                     return handleError(err, res, next);

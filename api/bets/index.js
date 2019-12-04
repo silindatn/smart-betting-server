@@ -18,6 +18,8 @@ activator.init(activatorConfig);
 // Creates a new event
 router.post('/', controller.create, responseFormatter);
 
+
+router.get('/chart-report', controller.chart_report, responseFormatter);
 // Reads an event
 router.get('/:id', controller.read, responseFormatter);
 
@@ -29,7 +31,5 @@ router.delete('/:id', controller.delete);
 
 // Lists all events
 router.get('/', controller.list, responseFormatter);
-
-router.get('/report', controller.chart_report, responseFormatter);
 
 module.exports = router;

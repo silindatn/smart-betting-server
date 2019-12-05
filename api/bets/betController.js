@@ -205,12 +205,6 @@ var Bet = require('./betModel'),
         },
 
         chart_report: function (req, res, next) {
-            console.log('**************************************************');
-            console.log('**************************************************');
-            console.log('**************************************************');
-            console.log('**************************************************');
-            console.log('**************************************************');
-            console.log('**************************************************');
             async.series([
                 function (callback) {
                     Market.find({})
@@ -224,25 +218,50 @@ var Bet = require('./betModel'),
                                             cb();
                                         }
                                     }, function done() {
-                                        _next_(null, ids);
+                                        _next_(null, ids, markets);
                                     })
                                 },
-                                function getBets(m_ids, _next_) {
-
-                                    console.log('...........ids..', m_ids.length);
+                                function getBets(m_ids, markets, _next_) {
                                     Bet.find({marketId: {$in: m_ids}}, (error, bets) => {
                                         if (error) {
                                             _next_(error, null);
                                         } else {
-                                            console.log('.............', bets.length);
-                                            _next_(null, bets);
+                                            _next_(null, bets, markets);
                                         }
                                     });
                                 },
-                                function chartData(bets, _next_) {
-                                    let inAmount = _.filter(bets, function(b) { return b.winings === 0; });
-                                    let outAmount = _.filter(bets, function(b) { return b.winings > 0; });
+                                function calculateWinnings(bets, markets, _next_) {
+                                    let winingbets = 0;
+                                    let losingbets = 0;
+                                    let winings = 0;
+                                    let loses = 0;
+                                    async.forEachOf(bets, (bet, i, cb) => {
+                                        const market = markets.find( m => {
+                                            return m._id = bet.marketId;
+                                        });
 
+                                        if (market.actualOutcome && market.actualOutcome.name === bet.posibleOutcome.name) {
+                                            winingbets += 1;
+                                            if (bet.winingMargins === 0) {
+                                                bet.winingMargins = 1 / bet.posibleOutcome.probability;
+                                            }
+
+                                            let win = bet.amount * bet.winingMargins;
+                                            winings += win - bet.amount;
+                                            bet.winings = win - bet.amount;
+                                            bet.save();
+                                            cb()
+                                        } else {
+                                            loses += bet.amount;
+                                            losingbets += 1;
+                                            cb();
+                                        }
+                                    }, function done () {
+                                        _next_(null, bets, winings, winingbets, loses, losingbets);
+                                    });
+
+                                },
+                                function chartData(bets, winings, winingbets, loses, losingbets, _next_) {
                                     let charts = [
                                         {
                                             labels: [
@@ -250,8 +269,8 @@ var Bet = require('./betModel'),
                                                 'Pay Out Bets'
                                             ],
                                             data: [
-                                                inAmount.length,
-                                                outAmount.length,
+                                                losingbets,
+                                                winingbets,
                                             ]
                                         },
                                         {
@@ -260,12 +279,12 @@ var Bet = require('./betModel'),
                                                 'Pay Out Amount'
                                             ],
                                             data: [
-                                                inAmount.reduce((a, b) => a.amount + b.amount, 0),
-                                                outAmount.reduce((a, b) => a.winings + b.winings, 0)
+                                                loses,
+                                                winings
                                             ]
                                         }
                                     ]
-                                    _next_(null, charts);
+                                    _next_(null, {charts, data: bets});
                                 }
                             ], 
                             function done (err, results) {

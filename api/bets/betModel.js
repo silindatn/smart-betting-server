@@ -18,6 +18,7 @@ var mongoose = require('mongoose'),
         },
         result: {type: String, default: 'pending'},
         winings: {type: Number, default: 0},
+        winingMargins: {type: Number, default: 0},
         amount: {type: Number, default: 0},
         createdAt: {type: Date},
         updatedAt: {type: Date},
@@ -37,6 +38,9 @@ BetSchema.set('toObject', {
 
 BetSchema
     .pre('save', function (next) {
+        if (this.posibleOutcome && this.posibleOutcome.probability) {
+            this.winingMargins = 1 / this.posibleOutcome.probability;
+        }
 
         if (!this.isNew) {
             this.updatedAt = moment();

@@ -264,6 +264,7 @@ var Bet = require('./betModel'),
                                 function chartData(bets, winings, winingbets, loses, losingbets, _next_) {
                                     let charts = [
                                         {
+                                            title: 'Winning Bets vs Losing Bets',
                                             labels: [
                                                 'Pay In Bets',
                                                 'Pay Out Bets'
@@ -274,6 +275,7 @@ var Bet = require('./betModel'),
                                             ]
                                         },
                                         {
+                                            title: 'Pay out Amount vs Pay in Amount',
                                             labels: [
                                                 'Pay In Amount',
                                                 'Pay Out Amount'
